@@ -19,11 +19,12 @@
       --bg-image: url("2f9f4714-8868-4fba-9dd5-e76419c19bef.jpg");
       --overlay-opacity: 0.72;
       --bg-blur: 3px;
-      --glass-bg: rgba(15, 23, 42, 0.76);
-      --glass-card: rgba(30, 41, 59, 0.72);
+      --glass-bg: rgba(15, 23, 42, 0.78);
+      --glass-card: rgba(30, 41, 59, 0.74);
       --glass-border: rgba(255, 255, 255, 0.14);
       --accent: #38bdf8;
       --accent-2: #22c55e;
+      --warning: #fbbf24;
       --danger: #ef4444;
       --text-main: #f8fafc;
       --text-muted: #cbd5e1;
@@ -45,7 +46,6 @@
       overflow-x: hidden;
     }
 
-    /* خلفية الصورة الثابتة */
     .bg-layer {
       position: fixed;
       inset: 0;
@@ -73,7 +73,6 @@
       padding: 16px 14px 36px;
     }
 
-    /* الهيدر */
     .topbar {
       display: flex;
       align-items: center;
@@ -151,18 +150,12 @@
       border-color: rgba(125, 211, 252, 0.4);
     }
 
-    .btn-success {
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      border-color: rgba(134, 239, 172, 0.4);
-    }
-
     .btn-danger {
       background: rgba(239, 68, 68, 0.22);
       border-color: rgba(248, 113, 113, 0.45);
       color: #fecaca;
     }
 
-    /* الشاشات */
     .screen {
       display: none;
       animation: fadeIn 0.2s ease;
@@ -177,7 +170,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* بطاقات الألعاب الرئيسية */
     .menu-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -241,7 +233,6 @@
       font-weight: 800;
     }
 
-    /* صندوق الجدول */
     .panel {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
@@ -313,7 +304,7 @@
     }
 
     .round-col {
-      width: 66px;
+      width: 68px;
       font-weight: 800;
       color: var(--accent);
       font-size: 0.85rem;
@@ -371,42 +362,65 @@
       padding: 12px 8px;
     }
 
-    .total-box-grid {
+    .diff-row td {
+      background: rgba(251, 191, 36, 0.14);
+      font-weight: 800;
+      font-size: 0.98rem;
+      color: #fde68a;
+      padding: 10px 8px;
+    }
+
+    .summary-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
       margin-top: 12px;
     }
 
-    .total-card {
-      background: rgba(15, 23, 42, 0.78);
+    @media (max-width: 480px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .summary-card {
+      background: rgba(15, 23, 42, 0.8);
       border: 1px solid var(--glass-border);
       border-radius: 14px;
-      padding: 12px;
+      padding: 11px 8px;
       text-align: center;
     }
 
-    .total-card .p-name {
-      font-size: 0.85rem;
+    .summary-card.diff-card {
+      border-color: rgba(251, 191, 36, 0.45);
+      background: rgba(120, 53, 15, 0.25);
+    }
+
+    .summary-card .s-label {
+      font-size: 0.8rem;
       color: var(--text-muted);
       margin-bottom: 4px;
     }
 
-    .total-card .p-sum {
-      font-size: 1.45rem;
+    .summary-card .s-val {
+      font-size: 1.35rem;
       font-weight: 800;
       color: #7dd3fc;
     }
 
+    .summary-card.diff-card .s-val {
+      color: #fcd34d;
+    }
+
     .leader-banner {
       margin-top: 10px;
-      padding: 10px 12px;
+      padding: 11px 12px;
       border-radius: 12px;
-      background: rgba(34, 197, 94, 0.15);
-      border: 1px solid rgba(34, 197, 94, 0.35);
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(34, 197, 94, 0.38);
       color: #dcfce7;
-      font-size: 0.9rem;
-      font-weight: 700;
+      font-size: 0.92rem;
+      font-weight: 800;
       text-align: center;
     }
 
@@ -444,7 +458,6 @@
       border-color: var(--accent);
     }
 
-    /* الإعدادات */
     .setting-item {
       margin-bottom: 14px;
     }
@@ -532,7 +545,7 @@
       <div class="panel" style="margin-bottom:12px;">
         <div class="panel-title">الجزء الأول — اختر اللعبة</div>
         <div class="note-box" style="margin-top:4px;">
-          اختر اللعبة لفتح جدول الحساب المباشر وحفظ النقاط تلقائياً على جهازك.
+          اختر اللعبة لفتح جدول الحساب المباشر ومعرفة المجموع والفرق بالأرقام فوراً.
         </div>
       </div>
 
@@ -541,7 +554,7 @@
           <div>
             <span class="game-badge">اللعبة الأولى • 8 جيمات</span>
             <h2 class="game-title">كونكان (Concan)</h2>
-            <p class="game-desc">جدول لاعبين (رقم 1 ورقم 2) حتى 8 جيمات مع تصفير تلقائي للخاسر وحساب المجموع الكلي.</p>
+            <p class="game-desc">جدول لاعبين (رقم 1 ورقم 2) حتى 8 جيمات مع تصفير تلقائي للخاسر وحساب المجموع والفرق بالأرقام.</p>
           </div>
           <div class="game-arrow">←</div>
         </button>
@@ -550,7 +563,7 @@
           <div>
             <span class="game-badge">اللعبة الثانية</span>
             <h2 class="game-title">دومينو (Domino)</h2>
-            <p class="game-desc">جدول تسجيل نقاط جولات الدومينو وحساب المجموع الكلي بين اللاعبين.</p>
+            <p class="game-desc">جدول تسجيل نقاط جولات الدومينو وحساب المجموع الكلي والفرق بالأرقام بين اللاعبين.</p>
           </div>
           <div class="game-arrow">←</div>
         </button>
@@ -559,7 +572,7 @@
           <div>
             <span class="game-badge">اللعبة الثالثة</span>
             <h2 class="game-title">مجموعة الألعاب العالمية</h2>
-            <p class="game-desc">حساب نقاط طرنيب، بلوت، تريكس، أو أونو في جدول موحد وسريع.</p>
+            <p class="game-desc">حساب نقاط طرنيب، بلوت، تريكس، أو أونو مع المجموع الكلي والفرق بالأرقام.</p>
           </div>
           <div class="game-arrow">←</div>
         </button>
@@ -608,22 +621,30 @@
                 <td id="c-p1-total">0</td>
                 <td id="c-p2-total">0</td>
               </tr>
+              <tr class="diff-row">
+                <td>الفرق</td>
+                <td colspan="2" id="c-diff-cell">الفرق: 0 نقطة</td>
+              </tr>
             </tfoot>
           </table>
         </div>
 
-        <div class="total-box-grid">
-          <div class="total-card">
-            <div class="p-name" id="c-card-p1-label">اللاعب رقم 1</div>
-            <div class="p-sum" id="c-card-p1-sum">0</div>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="s-label" id="c-card-p1-label">اللاعب رقم 1</div>
+            <div class="s-val" id="c-card-p1-sum">0</div>
           </div>
-          <div class="total-card">
-            <div class="p-name" id="c-card-p2-label">اللاعب رقم 2</div>
-            <div class="p-sum" id="c-card-p2-sum">0</div>
+          <div class="summary-card">
+            <div class="s-label" id="c-card-p2-label">اللاعب رقم 2</div>
+            <div class="s-val" id="c-card-p2-sum">0</div>
+          </div>
+          <div class="summary-card diff-card">
+            <div class="s-label">الفرق بالأرقام</div>
+            <div class="s-val" id="c-card-diff-val">0</div>
           </div>
         </div>
 
-        <div class="leader-banner" id="c-leader-banner">ابدأ بإدخال نقاط الجيمات (1 إلى 8) لحساب المجموع الكلي.</div>
+        <div class="leader-banner" id="c-leader-banner">ابدأ بإدخال نقاط الجيمات (1 إلى 8) لمعرفة المجموع والفرق.</div>
 
         <div class="note-box">
           • عند إدخال نقاط الفائز في أي جيم (مثلاً 200)، يتم تلقائياً وضع <strong>0</strong> في خانة اللاعب المقابل.<br />
@@ -664,9 +685,15 @@
                 <td id="d-p1-total">0</td>
                 <td id="d-p2-total">0</td>
               </tr>
+              <tr class="diff-row">
+                <td>الفرق</td>
+                <td colspan="2" id="d-diff-cell">الفرق: 0 نقطة</td>
+              </tr>
             </tfoot>
           </table>
         </div>
+
+        <div class="leader-banner" id="d-leader-banner">الفرق بين اللاعبين: 0 نقطة</div>
 
         <div style="display:flex; gap:8px; margin-top:12px;">
           <button class="btn btn-danger" onclick="resetGame('domino')">🗑️ تصفير جدول الدومينو</button>
@@ -709,9 +736,15 @@
                 <td id="w-p1-total">0</td>
                 <td id="w-p2-total">0</td>
               </tr>
+              <tr class="diff-row">
+                <td>الفرق</td>
+                <td colspan="2" id="w-diff-cell">الفرق: 0 نقطة</td>
+              </tr>
             </tfoot>
           </table>
         </div>
+
+        <div class="leader-banner" id="w-leader-banner">الفرق بين اللاعبين: 0 نقطة</div>
 
         <div style="display:flex; gap:8px; margin-top:12px;">
           <button class="btn btn-danger" onclick="resetGame('world')">🗑️ تصفير الجدول</button>
@@ -760,7 +793,7 @@
 
   <script>
     const DEFAULT_IMG = "2f9f4714-8868-4fba-9dd5-e76419c19bef.jpg";
-    const STORAGE_KEY = "ibrahim_games_app_v1";
+    const STORAGE_KEY = "ibrahim_games_app_v2";
     const ROUNDS_COUNT = 8;
 
     const defaultState = {
@@ -924,7 +957,6 @@
 
       activeInp.value = String(val);
 
-      // عند فوز لاعب وإدخال نقاطه، يصبح الطرف المقابل صفراً تلقائياً
       if (gameKey === "concan" && val > 0) {
         otherInp.value = "0";
         if (changedPlayer === 1) {
@@ -957,26 +989,40 @@
         sum2 += Number(r.p2) || 0;
       }
 
+      const diff = Math.abs(sum1 - sum2);
+      const p1Label = game.p1Name || "اللاعب رقم 1";
+      const p2Label = game.p2Name || "اللاعب رقم 2";
+
       const prefix = gameKey === "concan" ? "c" : gameKey === "domino" ? "d" : "w";
       document.getElementById(`${prefix}-p1-total`).textContent = sum1;
       document.getElementById(`${prefix}-p2-total`).textContent = sum2;
 
+      let diffText = `الفرق: ${diff} نقطة`;
+      let bannerText = `الفرق بالأرقام: ${diff} نقطة`;
+
+      if (sum1 > sum2) {
+        diffText = `الفرق: ${diff} نقطة (لصالح ${p1Label})`;
+        bannerText = `🏆 المتقدم: ${p1Label} — الفرق: ${diff} نقطة (${sum1} مقابل ${sum2})`;
+      } else if (sum2 > sum1) {
+        diffText = `الفرق: ${diff} نقطة (لصالح ${p2Label})`;
+        bannerText = `🏆 المتقدم: ${p2Label} — الفرق: ${diff} نقطة (${sum2} مقابل ${sum1})`;
+      } else if (sum1 === 0 && sum2 === 0) {
+        diffText = `الفرق: 0 نقطة`;
+        bannerText = `الفرق بالأرقام: 0 نقطة — أدخل النقاط لحساب الفرق`;
+      } else {
+        diffText = `الفرق: 0 نقطة (تعادل)`;
+        bannerText = `⚖️ تعادل (${sum1} لكل لاعب) — الفرق: 0 نقطة`;
+      }
+
+      document.getElementById(`${prefix}-diff-cell`).textContent = diffText;
+      document.getElementById(`${prefix}-leader-banner`).textContent = bannerText;
+
       if (gameKey === "concan") {
         document.getElementById("c-card-p1-sum").textContent = sum1;
         document.getElementById("c-card-p2-sum").textContent = sum2;
-        document.getElementById("c-card-p1-label").textContent = game.p1Name || "اللاعب رقم 1";
-        document.getElementById("c-card-p2-label").textContent = game.p2Name || "اللاعب رقم 2";
-
-        const banner = document.getElementById("c-leader-banner");
-        if (sum1 === 0 && sum2 === 0) {
-          banner.textContent = "ابدأ بإدخال نقاط الجيمات (1 إلى 8) لحساب المجموع الكلي.";
-        } else if (sum1 > sum2) {
-          banner.textContent = `🏆 المتقدم: ${game.p1Name || "اللاعب رقم 1"} (${sum1} مقابل ${sum2})`;
-        } else if (sum2 > sum1) {
-          banner.textContent = `🏆 المتقدم: ${game.p2Name || "اللاعب رقم 2"} (${sum2} مقابل ${sum1})`;
-        } else {
-          banner.textContent = `⚖️ تعادل في المجموع الكلي (${sum1} لكل منهما)`;
-        }
+        document.getElementById("c-card-diff-val").textContent = String(diff);
+        document.getElementById("c-card-p1-label").textContent = p1Label;
+        document.getElementById("c-card-p2-label").textContent = p2Label;
       }
     }
 
