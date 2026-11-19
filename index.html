@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="حاسبة الألعاب" />
+  <title>حاسبة الألعاب - إبراهيم إسماعيل</title>
+  <link id="app-icon" rel="icon" type="image/jpeg" href="2f9f4714-8868-4fba-9dd5-e76419c19bef.jpg" />
+  <link id="apple-icon" rel="apple-touch-icon" href="2f9f4714-8868-4fba-9dd5-e76419c19bef.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-image: url("2f9f4714-8868-4fba-9dd5-e76419c19bef.jpg");
+      --overlay-opacity: 0.72;
+      --bg-blur: 3px;
+      --glass-bg: rgba(15, 23, 42, 0.76);
+      --glass-card: rgba(30, 41, 59, 0.72);
+      --glass-border: rgba(255, 255, 255, 0.14);
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --danger: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+      color: var(--text-main);
+      background-color: #090d16;
+      overflow-x: hidden;
+    }
+
+    /* خلفية الصورة الثابتة */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: var(--bg-image);
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      filter: blur(var(--bg-blur));
+      transform: scale(1.06);
+      transition: filter 0.25s ease, background-image 0.25s ease;
+    }
+
+    .bg-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: rgba(9, 13, 22, var(--overlay-opacity));
+      transition: background 0.25s ease;
+    }
+
+    .app-container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 16px 14px 36px;
+    }
+
+    /* الهيدر */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      margin-bottom: 16px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .brand-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      object-fit: cover;
+      object-position: center top;
+      border: 2px solid var(--accent);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin: 0;
+    }
+
+    .brand-sub {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      font-family: inherit;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--text-main);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.12s ease, background 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: rgba(125, 211, 252, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      border-color: rgba(134, 239, 172, 0.4);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: rgba(248, 113, 113, 0.45);
+      color: #fecaca;
+    }
+
+    /* الشاشات */
+    .screen {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* بطاقات الألعاب الرئيسية */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .game-card {
+      width: 100%;
+      text-align: right;
+      padding: 18px 16px;
+      border-radius: var(--radius);
+      background: var(--glass-card);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+      transition: transform 0.14s ease, border-color 0.2s ease;
+    }
+
+    .game-card:active {
+      transform: scale(0.985);
+    }
+
+    .game-card:hover {
+      border-color: var(--accent);
+    }
+
+    .game-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.18);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .game-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin: 0 0 4px;
+    }
+
+    .game-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .game-arrow {
+      font-size: 1.35rem;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    /* صندوق الجدول */
+    .panel {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+      margin-bottom: 14px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .limit-pill {
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.16);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--glass-border);
+      background: rgba(15, 23, 42, 0.65);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 340px;
+    }
+
+    th, td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-left: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 8px 6px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    th:last-child, td:last-child {
+      border-left: none;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    thead th {
+      background: rgba(30, 41, 59, 0.9);
+      padding: 10px 6px;
+    }
+
+    .round-col {
+      width: 66px;
+      font-weight: 800;
+      color: var(--accent);
+      font-size: 0.85rem;
+    }
+
+    .player-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      padding: 7px 8px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .player-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .score-input {
+      width: 100%;
+      max-width: 115px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      padding: 8px 6px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .score-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+    }
+
+    .score-input.win-cell {
+      border-color: rgba(34, 197, 94, 0.65);
+      background: rgba(34, 197, 94, 0.14);
+      color: #bbf7d0;
+    }
+
+    .total-row td {
+      background: rgba(2, 132, 199, 0.22);
+      font-weight: 800;
+      font-size: 1.05rem;
+      padding: 12px 8px;
+    }
+
+    .total-box-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .total-card {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .total-card .p-name {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .total-card .p-sum {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #7dd3fc;
+    }
+
+    .leader-banner {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #dcfce7;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .note-box {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .world-games-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: var(--accent);
+      color: #082f49;
+      border-color: var(--accent);
+    }
+
+    /* الإعدادات */
+    .setting-item {
+      margin-bottom: 14px;
+    }
+
+    .setting-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .range-input {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.95);
+      color: #fff;
+      border: 1px solid var(--accent);
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 99;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .footer-credit {
+      margin-top: 22px;
+      text-align: center;
+      padding: 14px 12px;
+      border-radius: var(--radius);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .footer-credit span {
+      display: block;
+      margin-top: 4px;
+      color: var(--accent);
+      font-size: 0.84rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer" id="bgLayer"></div>
+  <div class="bg-scrim" id="bgScrim"></div>
+
+  <div class="app-container">
+    <header class="topbar">
+      <div class="brand" onclick="openScreen('home')" style="cursor:pointer;">
+        <img src="2f9f4714-8868-4fba-9dd5-e76419c19bef.jpg" alt="أيقونة التطبيق" class="brand-avatar" id="headerAvatar" />
+        <div>
+          <h1 class="brand-title">حاسبة الألعاب</h1>
+          <div class="brand-sub" id="headerSubtitle">الجزء الأول: الألعاب وحساب النقاط</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn" id="btnBack" onclick="openScreen('home')" style="display:none;">🏠 الرئيسية</button>
+        <button class="btn" onclick="openScreen('settings')">⚙️ الإعدادات</button>
+      </div>
+    </header>
+
+    <!-- الشاشة الرئيسية -->
+    <section id="screen-home" class="screen active">
+      <div class="panel" style="margin-bottom:12px;">
+        <div class="panel-title">الجزء الأول — اختر اللعبة</div>
+        <div class="note-box" style="margin-top:4px;">
+          اختر اللعبة لفتح جدول الحساب المباشر وحفظ النقاط تلقائياً على جهازك.
+        </div>
+      </div>
+
+      <div class="menu-grid">
+        <button class="game-card" onclick="openScreen('concan')">
+          <div>
+            <span class="game-badge">اللعبة الأولى • 8 جيمات</span>
+            <h2 class="game-title">كونكان (Concan)</h2>
+            <p class="game-desc">جدول لاعبين (رقم 1 ورقم 2) حتى 8 جيمات مع تصفير تلقائي للخاسر وحساب المجموع الكلي.</p>
+          </div>
+          <div class="game-arrow">←</div>
+        </button>
+
+        <button class="game-card" onclick="openScreen('domino')">
+          <div>
+            <span class="game-badge">اللعبة الثانية</span>
+            <h2 class="game-title">دومينو (Domino)</h2>
+            <p class="game-desc">جدول تسجيل نقاط جولات الدومينو وحساب المجموع الكلي بين اللاعبين.</p>
+          </div>
+          <div class="game-arrow">←</div>
+        </button>
+
+        <button class="game-card" onclick="openScreen('world')">
+          <div>
+            <span class="game-badge">اللعبة الثالثة</span>
+            <h2 class="game-title">مجموعة الألعاب العالمية</h2>
+            <p class="game-desc">حساب نقاط طرنيب، بلوت، تريكس، أو أونو في جدول موحد وسريع.</p>
+          </div>
+          <div class="game-arrow">←</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- شاشة الكونكان -->
+    <section id="screen-concan" class="screen">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">جدول الكونكان (8 جيمات)</h2>
+          <span class="limit-pill" id="concanLimitBadge">الحد الأقصى: 1000 نقطة</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="round-col">الجيم</th>
+                <th>
+                  <input
+                    type="text"
+                    class="player-input"
+                    id="c-p1-name"
+                    value="اللاعب رقم 1"
+                    aria-label="اسم اللاعب رقم 1"
+                    oninput="updatePlayerNames('concan')"
+                  />
+                </th>
+                <th>
+                  <input
+                    type="text"
+                    class="player-input"
+                    id="c-p2-name"
+                    value="اللاعب رقم 2"
+                    aria-label="اسم اللاعب رقم 2"
+                    oninput="updatePlayerNames('concan')"
+                  />
+                </th>
+              </tr>
+            </thead>
+            <tbody id="concan-tbody"></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td>المجموع</td>
+                <td id="c-p1-total">0</td>
+                <td id="c-p2-total">0</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="total-box-grid">
+          <div class="total-card">
+            <div class="p-name" id="c-card-p1-label">اللاعب رقم 1</div>
+            <div class="p-sum" id="c-card-p1-sum">0</div>
+          </div>
+          <div class="total-card">
+            <div class="p-name" id="c-card-p2-label">اللاعب رقم 2</div>
+            <div class="p-sum" id="c-card-p2-sum">0</div>
+          </div>
+        </div>
+
+        <div class="leader-banner" id="c-leader-banner">ابدأ بإدخال نقاط الجيمات (1 إلى 8) لحساب المجموع الكلي.</div>
+
+        <div class="note-box">
+          • عند إدخال نقاط الفائز في أي جيم (مثلاً 200)، يتم تلقائياً وضع <strong>0</strong> في خانة اللاعب المقابل.<br />
+          • أقصى نقطة مسموحة في الخانة الواحدة هي حسب الإعداد (الافتراضي <strong>1000</strong> نقطة).
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+          <button class="btn btn-danger" onclick="resetGame('concan')">🗑️ تصفير جدول الكونكان</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- شاشة الدومينو -->
+    <section id="screen-domino" class="screen">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">جدول الدومينو (8 جولات)</h2>
+          <span class="limit-pill" id="dominoLimitBadge">الحد الأقصى: 1000 نقطة</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="round-col">الجولة</th>
+                <th>
+                  <input type="text" class="player-input" id="d-p1-name" value="اللاعب رقم 1" oninput="updatePlayerNames('domino')" />
+                </th>
+                <th>
+                  <input type="text" class="player-input" id="d-p2-name" value="اللاعب رقم 2" oninput="updatePlayerNames('domino')" />
+                </th>
+              </tr>
+            </thead>
+            <tbody id="domino-tbody"></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td>المجموع</td>
+                <td id="d-p1-total">0</td>
+                <td id="d-p2-total">0</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button class="btn btn-danger" onclick="resetGame('domino')">🗑️ تصفير جدول الدومينو</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- شاشة الألعاب العالمية -->
+    <section id="screen-world" class="screen">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">الألعاب العالمية</h2>
+          <span class="limit-pill" id="worldLimitBadge">الحد الأقصى: 1000 نقطة</span>
+        </div>
+
+        <div class="world-games-bar" id="worldChips">
+          <button class="chip active" data-game="طرنيب" onclick="selectWorldGame(this)">🃏 طرنيب</button>
+          <button class="chip" data-game="بلوت" onclick="selectWorldGame(this)">♠️ بلوت</button>
+          <button class="chip" data-game="تريكس" onclick="selectWorldGame(this)">👑 تريكس</button>
+          <button class="chip" data-game="أونو" onclick="selectWorldGame(this)">🌈 أونو</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="round-col">الجولة</th>
+                <th>
+                  <input type="text" class="player-input" id="w-p1-name" value="اللاعب رقم 1" oninput="updatePlayerNames('world')" />
+                </th>
+                <th>
+                  <input type="text" class="player-input" id="w-p2-name" value="اللاعب رقم 2" oninput="updatePlayerNames('world')" />
+                </th>
+              </tr>
+            </thead>
+            <tbody id="world-tbody"></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td>المجموع</td>
+                <td id="w-p1-total">0</td>
+                <td id="w-p2-total">0</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button class="btn btn-danger" onclick="resetGame('world')">🗑️ تصفير الجدول</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- شاشة الإعدادات -->
+    <section id="screen-settings" class="screen">
+      <div class="panel">
+        <h2 class="panel-title" style="margin-bottom:14px;">إعدادات التطبيق والخلفية</h2>
+
+        <div class="setting-item">
+          <label class="setting-label" for="maxPointsInput">أقصى عدد نقاط مسموح في الخانة الواحدة</label>
+          <input type="number" id="maxPointsInput" class="player-input" min="10" max="100000" value="1000" onchange="saveMaxPoints()" />
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label" for="overlayRange">تعتيم الخلفية فوق الصورة</label>
+          <input type="range" id="overlayRange" class="range-input" min="35" max="90" value="72" oninput="updateVisualSettings()" />
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label" for="blurRange">درجة تمويه الخلفية (Blur)</label>
+          <input type="range" id="blurRange" class="range-input" min="0" max="12" value="3" oninput="updateVisualSettings()" />
+        </div>
+
+        <div class="setting-item">
+          <label class="setting-label">تغيير صورة الخلفية والأيقونة من الهاتف</label>
+          <input type="file" id="bgFileInput" accept="image/*" style="display:none;" onchange="handleCustomImage(event)" />
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="document.getElementById('bgFileInput').click()">🖼️ اختيار صورة جديدة</button>
+            <button class="btn" onclick="resetDefaultImage()">↩️ استعادة الصورة الأصلية</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer-credit">
+      صنع من قبل إبراهيم إسماعيل
+      <span>#Made by Ibrahim Ismail</span>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const DEFAULT_IMG = "2f9f4714-8868-4fba-9dd5-e76419c19bef.jpg";
+    const STORAGE_KEY = "ibrahim_games_app_v1";
+    const ROUNDS_COUNT = 8;
+
+    const defaultState = {
+      maxPoints: 1000,
+      overlayOpacity: 72,
+      blurPx: 3,
+      customImage: "",
+      worldGameName: "طرنيب",
+      games: {
+        concan: {
+          p1Name: "اللاعب رقم 1",
+          p2Name: "اللاعب رقم 2",
+          rows: Array.from({ length: ROUNDS_COUNT }, () => ({ p1: "", p2: "", winner: null }))
+        },
+        domino: {
+          p1Name: "اللاعب رقم 1",
+          p2Name: "اللاعب رقم 2",
+          rows: Array.from({ length: ROUNDS_COUNT }, () => ({ p1: "", p2: "", winner: null }))
+        },
+        world: {
+          p1Name: "اللاعب رقم 1",
+          p2Name: "اللاعب رقم 2",
+          rows: Array.from({ length: ROUNDS_COUNT }, () => ({ p1: "", p2: "", winner: null }))
+        }
+      }
+    };
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return structuredClone(defaultState);
+        const parsed = JSON.parse(raw);
+        return {
+          ...structuredClone(defaultState),
+          ...parsed,
+          games: {
+            concan: { ...structuredClone(defaultState.games.concan), ...(parsed.games?.concan || {}) },
+            domino: { ...structuredClone(defaultState.games.domino), ...(parsed.games?.domino || {}) },
+            world: { ...structuredClone(defaultState.games.world), ...(parsed.games?.world || {}) }
+          }
+        };
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        showToast("تنبيه: تعذر حفظ الصورة الكبيرة في الذاكرة المحلية");
+      }
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => el.classList.remove("show"), 2300);
+    }
+
+    function openScreen(name) {
+      document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+      const target = document.getElementById("screen-" + name);
+      if (target) target.classList.add("active");
+
+      const btnBack = document.getElementById("btnBack");
+      const sub = document.getElementById("headerSubtitle");
+
+      if (name === "home") {
+        btnBack.style.display = "none";
+        sub.textContent = "الجزء الأول: الألعاب وحساب النقاط";
+      } else {
+        btnBack.style.display = "inline-flex";
+        const titles = {
+          concan: "اللعبة الأولى: كونكان",
+          domino: "اللعبة الثانية: دومينو",
+          world: "اللعبة الثالثة: " + state.worldGameName,
+          settings: "الإعدادات والمظهر"
+        };
+        sub.textContent = titles[name] || "حاسبة الألعاب";
+      }
+    }
+
+    function buildTableRows(gameKey) {
+      const tbody = document.getElementById(gameKey + "-tbody");
+      tbody.innerHTML = "";
+      const game = state.games[gameKey];
+
+      for (let i = 0; i < ROUNDS_COUNT; i++) {
+        const row = game.rows[i] || { p1: "", p2: "", winner: null };
+        const tr = document.createElement("tr");
+
+        const tdRound = document.createElement("td");
+        tdRound.className = "round-col";
+        tdRound.textContent = "جيم " + (i + 1);
+
+        const tdP1 = document.createElement("td");
+        const inp1 = document.createElement("input");
+        inp1.type = "number";
+        inp1.inputMode = "numeric";
+        inp1.min = "0";
+        inp1.max = String(state.maxPoints);
+        inp1.className = "score-input" + (row.winner === "p1" ? " win-cell" : "");
+        inp1.placeholder = "0";
+        inp1.value = row.p1;
+        inp1.id = `${gameKey}-r${i}-p1`;
+        inp1.addEventListener("input", () => handleScoreChange(gameKey, i, 1));
+
+        const tdP2 = document.createElement("td");
+        const inp2 = document.createElement("input");
+        inp2.type = "number";
+        inp2.inputMode = "numeric";
+        inp2.min = "0";
+        inp2.max = String(state.maxPoints);
+        inp2.className = "score-input" + (row.winner === "p2" ? " win-cell" : "");
+        inp2.placeholder = "0";
+        inp2.value = row.p2;
+        inp2.id = `${gameKey}-r${i}-p2`;
+        inp2.addEventListener("input", () => handleScoreChange(gameKey, i, 2));
+
+        tdP1.appendChild(inp1);
+        tdP2.appendChild(inp2);
+        tr.appendChild(tdRound);
+        tr.appendChild(tdP1);
+        tr.appendChild(tdP2);
+        tbody.appendChild(tr);
+      }
+    }
+
+    function handleScoreChange(gameKey, rowIndex, changedPlayer) {
+      const inp1 = document.getElementById(`${gameKey}-r${rowIndex}-p1`);
+      const inp2 = document.getElementById(`${gameKey}-r${rowIndex}-p2`);
+      const activeInp = changedPlayer === 1 ? inp1 : inp2;
+      const otherInp = changedPlayer === 1 ? inp2 : inp1;
+
+      if (activeInp.value === "") {
+        state.games[gameKey].rows[rowIndex] = {
+          p1: inp1.value,
+          p2: inp2.value,
+          winner: null
+        };
+        inp1.classList.remove("win-cell");
+        inp2.classList.remove("win-cell");
+        recalculate(gameKey);
+        saveState();
+        return;
+      }
+
+      let val = Number(activeInp.value);
+      if (Number.isNaN(val) || val < 0) {
+        val = 0;
+      }
+      if (val > state.maxPoints) {
+        val = state.maxPoints;
+        showToast(`أقصى نقطة مسموحة هي ${state.maxPoints}`);
+      }
+
+      activeInp.value = String(val);
+
+      // عند فوز لاعب وإدخال نقاطه، يصبح الطرف المقابل صفراً تلقائياً
+      if (gameKey === "concan" && val > 0) {
+        otherInp.value = "0";
+        if (changedPlayer === 1) {
+          inp1.classList.add("win-cell");
+          inp2.classList.remove("win-cell");
+        } else {
+          inp2.classList.add("win-cell");
+          inp1.classList.remove("win-cell");
+        }
+      }
+
+      state.games[gameKey].rows[rowIndex] = {
+        p1: inp1.value,
+        p2: inp2.value,
+        winner: gameKey === "concan" && val > 0 ? (changedPlayer === 1 ? "p1" : "p2") : null
+      };
+
+      recalculate(gameKey);
+      saveState();
+    }
+
+    function recalculate(gameKey) {
+      const game = state.games[gameKey];
+      let sum1 = 0;
+      let sum2 = 0;
+
+      for (let i = 0; i < ROUNDS_COUNT; i++) {
+        const r = game.rows[i] || { p1: "", p2: "" };
+        sum1 += Number(r.p1) || 0;
+        sum2 += Number(r.p2) || 0;
+      }
+
+      const prefix = gameKey === "concan" ? "c" : gameKey === "domino" ? "d" : "w";
+      document.getElementById(`${prefix}-p1-total`).textContent = sum1;
+      document.getElementById(`${prefix}-p2-total`).textContent = sum2;
+
+      if (gameKey === "concan") {
+        document.getElementById("c-card-p1-sum").textContent = sum1;
+        document.getElementById("c-card-p2-sum").textContent = sum2;
+        document.getElementById("c-card-p1-label").textContent = game.p1Name || "اللاعب رقم 1";
+        document.getElementById("c-card-p2-label").textContent = game.p2Name || "اللاعب رقم 2";
+
+        const banner = document.getElementById("c-leader-banner");
+        if (sum1 === 0 && sum2 === 0) {
+          banner.textContent = "ابدأ بإدخال نقاط الجيمات (1 إلى 8) لحساب المجموع الكلي.";
+        } else if (sum1 > sum2) {
+          banner.textContent = `🏆 المتقدم: ${game.p1Name || "اللاعب رقم 1"} (${sum1} مقابل ${sum2})`;
+        } else if (sum2 > sum1) {
+          banner.textContent = `🏆 المتقدم: ${game.p2Name || "اللاعب رقم 2"} (${sum2} مقابل ${sum1})`;
+        } else {
+          banner.textContent = `⚖️ تعادل في المجموع الكلي (${sum1} لكل منهما)`;
+        }
+      }
+    }
+
+    function updatePlayerNames(gameKey) {
+      const prefix = gameKey === "concan" ? "c" : gameKey === "domino" ? "d" : "w";
+      const n1 = document.getElementById(`${prefix}-p1-name`).value.trim() || "اللاعب رقم 1";
+      const n2 = document.getElementById(`${prefix}-p2-name`).value.trim() || "اللاعب رقم 2";
+      state.games[gameKey].p1Name = n1;
+      state.games[gameKey].p2Name = n2;
+      recalculate(gameKey);
+      saveState();
+    }
+
+    function resetGame(gameKey) {
+      const game = state.games[gameKey];
+      game.rows = Array.from({ length: ROUNDS_COUNT }, () => ({ p1: "", p2: "", winner: null }));
+      buildTableRows(gameKey);
+      recalculate(gameKey);
+      saveState();
+      showToast("تم تصفير الجدول بنجاح");
+    }
+
+    function selectWorldGame(btn) {
+      document.querySelectorAll("#worldChips .chip").forEach((c) => c.classList.remove("active"));
+      btn.classList.add("active");
+      state.worldGameName = btn.dataset.game;
+      document.getElementById("headerSubtitle").textContent = "اللعبة الثالثة: " + state.worldGameName;
+      saveState();
+      showToast("تم اختيار: " + state.worldGameName);
+    }
+
+    function saveMaxPoints() {
+      const input = document.getElementById("maxPointsInput");
+      let val = parseInt(input.value, 10);
+      if (Number.isNaN(val) || val < 10) val = 1000;
+      state.maxPoints = val;
+      input.value = String(val);
+      updateLimitBadges();
+      buildTableRows("concan");
+      buildTableRows("domino");
+      buildTableRows("world");
+      saveState();
+      showToast("تم حفظ الحد الأقصى للنقاط: " + val);
+    }
+
+    function updateLimitBadges() {
+      const text = `الحد الأقصى: ${state.maxPoints} نقطة`;
+      document.getElementById("concanLimitBadge").textContent = text;
+      document.getElementById("dominoLimitBadge").textContent = text;
+      document.getElementById("worldLimitBadge").textContent = text;
+    }
+
+    function applyImage(src) {
+      const finalSrc = src || DEFAULT_IMG;
+      document.documentElement.style.setProperty("--bg-image", `url("${finalSrc}")`);
+      document.getElementById("headerAvatar").src = finalSrc;
+      document.getElementById("app-icon").href = finalSrc;
+      document.getElementById("apple-icon").href = finalSrc;
+    }
+
+    function updateVisualSettings() {
+      const op = Number(document.getElementById("overlayRange").value);
+      const bl = Number(document.getElementById("blurRange").value);
+      state.overlayOpacity = op;
+      state.blurPx = bl;
+      document.documentElement.style.setProperty("--overlay-opacity", (op / 100).toFixed(2));
+      document.documentElement.style.setProperty("--bg-blur", bl + "px");
+      saveState();
+    }
+
+    function handleCustomImage(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        state.customImage = String(reader.result || "");
+        applyImage(state.customImage);
+        saveState();
+        showToast("تم تحديث صورة الخلفية والأيقونة");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetDefaultImage() {
+      state.customImage = "";
+      applyImage(DEFAULT_IMG);
+      saveState();
+      showToast("تمت استعادة الصورة الأصلية");
+    }
+
+    function initApp() {
+      document.getElementById("maxPointsInput").value = String(state.maxPoints);
+      document.getElementById("overlayRange").value = String(state.overlayOpacity);
+      document.getElementById("blurRange").value = String(state.blurPx);
+
+      document.getElementById("c-p1-name").value = state.games.concan.p1Name;
+      document.getElementById("c-p2-name").value = state.games.concan.p2Name;
+      document.getElementById("d-p1-name").value = state.games.domino.p1Name;
+      document.getElementById("d-p2-name").value = state.games.domino.p2Name;
+      document.getElementById("w-p1-name").value = state.games.world.p1Name;
+      document.getElementById("w-p2-name").value = state.games.world.p2Name;
+
+      document.querySelectorAll("#worldChips .chip").forEach((chip) => {
+        chip.classList.toggle("active", chip.dataset.game === state.worldGameName);
+      });
+
+      applyImage(state.customImage || DEFAULT_IMG);
+      updateVisualSettings();
+      updateLimitBadges();
+
+      buildTableRows("concan");
+      buildTableRows("domino");
+      buildTableRows("world");
+
+      recalculate("concan");
+      recalculate("domino");
+      recalculate("world");
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
